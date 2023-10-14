@@ -37,7 +37,8 @@ def main():
     funnel_data = dict(sorted(funnel_data.items(), key=lambda item: item[1], reverse=True))
     # Create a dataframe with labels, values and conversion percentages
     df = pd.DataFrame(list(funnel_data.items()), columns=['Stage', 'Total'])
-    df['Conversion (%)'] = (df['Total'] / df['Total'].shift()) * 100
+    df['Total'] = df['Total'].astype(int)
+    df['Conversion (%)'] = ((df['Total'] / df['Total'].shift()) * 100).fillna(0).astype(int)
     st.dataframe(df)
     # fig = go.Figure(data=[
     #     go.Bar(

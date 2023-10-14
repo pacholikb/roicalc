@@ -29,7 +29,7 @@ def main():
     projected_revenue = new_customers * avg_deal_size
 
     # Dynamic sentence
-    st.markdown(f"With <span style='color:blue;'>{accounts}</span> accounts promoting your LinkedIn event you should be able to send <span style='color:blue;'>{total_invites}</span> invites and get <span style='color:blue;'>{int(registrants)}</span> registrants (assuming you max out the 1k invites/week/account limit and promote for 2 weeks).", unsafe_allow_html=True) 
+    st.markdown(f"With <span style='color:blue;'>{int(accounts)}</span> accounts promoting your LinkedIn event you should be able to send <span style='color:blue;'>{int(total_invites)}</span> invites and get <span style='color:blue;'>{int(registrants)}</span> registrants (assuming you max out the 1k invites/week/account limit and promote for 2 weeks).", unsafe_allow_html=True) 
     st.markdown(f"Based on the estimations this will result in <span style='color:blue;'>{int(attendees)}</span> live attendees, <span style='color:blue;'>{int(new_customers)}</span> new customers.", unsafe_allow_html=True)
     st.markdown(f"<b>Projected Event Revenue:</b> <span style='color:blue;'>${projected_revenue:,.2f}</span>", unsafe_allow_html=True)
     # Funnel Graphic

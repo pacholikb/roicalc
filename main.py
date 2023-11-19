@@ -2,16 +2,18 @@
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
+from markdownlit import mdlit
 
-# Streamlit app
 def main():
-    st.title("LinkedIn Event Funnel Estimator")
+    st.set_page_config(page_icon=":1234:")
+    st.title("Event Funnel :green[Revenue] Estimator")
+    mdlit("""This app gives you an example of how much you could make from hosting LinkedIn events depending on the amount of followers you have and how many accounts you have to promote it.""")  
     st.markdown("")
     col1, col2, col3 = st.columns(3)
     with col1:
         accounts = st.number_input("Number of LinkedIn accounts.", min_value=1, value=2, step=1, help="The number of Linkedin accounts inviting people to your LinkedIn event")
     with col2:
-        avg_deal_size = st.number_input("Your average deal size ($)", min_value=0, value=5000, step=1000)
+        avg_deal_size = st.number_input("Your average deal size ($)", min_value=0, value=3000, step=1000, help="What is the value of the your event offer?")
     with col3:
         pass
     col3, col4, col5 = st.columns([4,1,1])
@@ -29,9 +31,13 @@ def main():
     projected_revenue = new_customers * avg_deal_size
 
     # Dynamic sentence
-    st.markdown(f"With <span style='color:blue;'>{int(accounts)}</span> accounts promoting your LinkedIn event you should be able to send <span style='color:blue;'>{int(total_invites)}</span> invites and get <span style='color:blue;'>{int(registrants)}</span> registrants (assuming you max out the 1k invites/week/account limit and promote for 2 weeks).", unsafe_allow_html=True) 
-    st.markdown(f"Based on the estimations this will result in <span style='color:blue;'>{int(attendees)}</span> live attendees, <span style='color:blue;'>{int(new_customers)}</span> new customers.", unsafe_allow_html=True)
-    st.markdown(f"<b>Projected Event Revenue:</b> <span style='color:blue;'>${projected_revenue:,.2f}</span>", unsafe_allow_html=True)
+    mdlit(f"With [blue]{int(accounts)}[/blue] accounts promoting your event you should be able to send [blue]{int(total_invites)}[/blue] invites and get [blue]{int(registrants)}[/blue] registrants*.") 
+    mdlit(f"Based on the conversion estimations this will result in [blue]{int(attendees)}[/blue] live attendees, [blue]{int(new_customers)}[/blue] new customers.")
+    st.subheader(f"Projected Event Revenue: :green[${projected_revenue:,.2f}]")
+    annual_projected_revenue = projected_revenue * 4
+    mdlit(f"<span style=color:grey;>*_This is assuming you max out the 1k invites/week/account limit and promote for 2 weeks._</span>")
+    st.success(f"That could be a ${annual_projected_revenue:,.2f} increase in revenue if you held even a quarterly event.")
+
     # Funnel Graphic
     funnel_data = {"Registrants": registrants, "Live Attendees": attendees, "New Customers": new_customers}
     funnel_data = dict(sorted(funnel_data.items(), key=lambda item: item[1], reverse=True))
@@ -39,16 +45,14 @@ def main():
     df = pd.DataFrame(list(funnel_data.items()), columns=['Stage', 'Total'])
     df['Total'] = df['Total'].astype(int)
     df['Conversion (%)'] = ((df['Total'] / df['Total'].shift()) * 100).fillna(0).astype(int)
-    st.dataframe(df)
-    # fig = go.Figure(data=[
-    #     go.Bar(
-    #         x=list(funnel_data.keys()),
-    #         y=list(funnel_data.values()),
-    #         text=[int(value) for value in funnel_data.values()],
-    #         textposition='auto',
-    #     )
-    # ])
-    # fig.update_layout(autosize=False, width=500)  # Adjust the width of the chart to be 2/3 of the full column
-    # st.plotly_chart(fig)
+    
+    col6, col7, col8 = st.columns([4,1,1])
+    with col6:
+        with st.expander("Show event pipeline numbers"):
+            st.dataframe(df, hide_index=True)
+            st.caption("You can make edits to these conversation rates in the dropdown above")
+
+    mdlit(f"")
+
 if __name__ == "__main__":
     main()
